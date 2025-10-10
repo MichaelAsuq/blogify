@@ -173,7 +173,7 @@ export default function SignUp() {
         <div className="flex flex-col sm:flex-row sm:space-x-3 sm:space-y-0 space-y-3">
           <button
             onClick={handleGoogleSignUp}
-            className="flex items-center justify-center w-full border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition duration-300 text-sm font-medium"
+            className="flex items-center justify-center w-full border border-gray-500 py-2 rounded-lg hover:bg-gray-50 transition duration-300 text-sm font-medium"
           >
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
