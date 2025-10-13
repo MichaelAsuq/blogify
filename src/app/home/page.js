@@ -1,11 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { collection, getDocs, query, orderBy, doc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  doc,
+  setDoc,
+} from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import Link from "next/link";
-import { BookmarkIcon as OutlineBookmarkIcon } from "@heroicons/react/24/outline";
+import {
+  BookmarkIcon as OutlineBookmarkIcon,
+  Bars3Icon as MenuIcon,
+  XMarkIcon as XIcon,
+} from "@heroicons/react/24/outline";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Blogs() {
   const [posts, setPosts] = useState([]);
@@ -74,33 +86,44 @@ export default function Blogs() {
     <div className="min-h-screen bg-[#fafafa] px-4 sm:px-6 md:px-10 lg:px-20 py-12 sm:py-16">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-12">
+        <div className="flex justify-between items-center mb-12 relative">
           <h1 className="text-2xl sm:text-3xl font-bold font-serif text-gray-900">
             Blogify
           </h1>
 
           {user && (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 relative">
+              {/* Username */}
+              <span className="text-gray-800 font-medium text-sm sm:text-base">
+                {user.displayName || "Anonymous"}
+              </span>
+
+              {/* Create Blog (always visible) */}
               <Link
                 href="/create"
-                className="px-4 py-1.5 bg-black text-white text-md rounded-md hover:bg-gray-900 transition"
+                className="px-3 sm:px-4 py-1.5 bg-black text-white text-sm sm:text-md rounded-md hover:bg-gray-900 transition"
               >
                 + New Blog
               </Link>
 
-              <Link
-                href="/library"
-                className="px-4 py-1.5 border border-black text-black rounded-md hover:bg-black hover:text-white transition"
-              >
-                Library
-              </Link>
+              {/* Desktop Menu */}
+              <div className="hidden sm:flex items-center gap-3">
+                <Link
+                  href="/library"
+                  className="px-4 py-1.5 border border-black text-black rounded-md hover:bg-black hover:text-white transition"
+                >
+                  Library
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-1.5 border border-black text-black rounded-md hover:bg-black hover:text-white transition"
+                >
+                  Logout
+                </button>
+              </div>
 
-              <button
-                onClick={handleLogout}
-                className="px-4 py-1.5 border border-black text-black rounded-md hover:bg-black hover:text-white transition"
-              >
-                Logout
-              </button>
+              {/* Mobile Menu */}
+              <MobileMenu handleLogout={handleLogout} />
             </div>
           )}
         </div>
@@ -134,7 +157,7 @@ export default function Blogs() {
                 {/* Author and Date */}
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2 text-sm text-gray-500">
-                     <span>{post.author || "Anonymous"}</span>
+                    <span>{post.author || "Anonymous"}</span>
                     <span>·</span>
                     <span>
                       {post.createdAt?.toDate
@@ -181,6 +204,57 @@ export default function Blogs() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/* 📱 Mobile Menu Component with animation */
+function MobileMenu({ handleLogout }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="sm:hidden relative">
+      {/* Hamburger Icon */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="p-2 rounded-md border border-gray-300 hover:bg-gray-100 transition"
+      >
+        {open ? (
+          <XIcon className="w-5 h-5 text-black" />
+        ) : (
+          <MenuIcon className="w-5 h-5 text-black" />
+        )}
+      </button>
+
+      {/* Animated Dropdown */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+            className="absolute right-0 top-10 bg-white shadow-lg rounded-lg flex flex-col w-40 py-2 z-50 border border-gray-200"
+          >
+            <Link
+              href="/library"
+              className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              onClick={() => setOpen(false)}
+            >
+              Library
+            </Link>
+            <button
+              onClick={() => {
+                handleLogout();
+                setOpen(false);
+              }}
+              className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+            >
+              Logout
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
