@@ -23,6 +23,7 @@ export default function Blogs() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [saved, setSaved] = useState({visible:false, message:''})
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -67,6 +68,13 @@ export default function Blogs() {
         savedBy: user.uid,
         savedAt: new Date(),
       });
+      setSaved({visible: true,
+        message:'Blog has been saved to your library',
+      })
+
+        setTimeout(() => {
+        setSaved({ visible: false, message: "" });
+      }, 5000);
     } catch (err) {
       console.error(err);
     }
@@ -81,6 +89,8 @@ export default function Blogs() {
       </div>
     );
   }
+
+  
 
   return (
     <div className="min-h-screen bg-[#fafafa] px-4 sm:px-6 md:px-10 lg:px-20 py-12 sm:py-16">
@@ -103,6 +113,8 @@ export default function Blogs() {
             </div>
           )}
         </div>
+
+
 
         {/* Intro */}
         <div className="text-center mb-10 sm:mb-14">
@@ -180,6 +192,20 @@ export default function Blogs() {
           </div>
         )}
       </div>
+ <AnimatePresence>
+        {saved.visible && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            transition={{ duration: 0.3 }}
+            className="fixed top-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-sm sm:text-base font-sm px-5 py-3 rounded-full shadow-lg"
+          >
+            {saved.message}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }
