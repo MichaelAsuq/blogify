@@ -93,37 +93,13 @@ export default function Blogs() {
 
           {user && (
             <div className="flex items-center gap-3 relative">
-              {/* Username */}
-              <span className="text-gray-800 font-medium text-sm sm:text-base">
+              {/* Username always visible */}
+              <span className="text-gray-800 font-medium md:me-4 sm:me-2 text-sm sm:text-base">
                 {user.displayName || "Anonymous"}
               </span>
 
-              {/* Create Blog (always visible) */}
-              <Link
-                href="/create"
-                className="px-3 sm:px-4 py-1.5 bg-black text-white text-sm sm:text-md rounded-md hover:bg-gray-900 transition"
-              >
-                + New Blog
-              </Link>
-
-              {/* Desktop Menu */}
-              <div className="hidden sm:flex items-center gap-3">
-                <Link
-                  href="/library"
-                  className="px-4 py-1.5 border border-black text-black rounded-md hover:bg-black hover:text-white transition"
-                >
-                  Library
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="px-4 py-1.5 border border-black text-black rounded-md hover:bg-black hover:text-white transition"
-                >
-                  Logout
-                </button>
-              </div>
-
-              {/* Mobile Menu */}
-              <MobileMenu handleLogout={handleLogout} />
+              {/* Menu (same on all screens) */}
+              <HamburgerMenu handleLogout={handleLogout} />
             </div>
           )}
         </div>
@@ -208,21 +184,21 @@ export default function Blogs() {
   );
 }
 
-/* 📱 Mobile Menu Component with animation */
-function MobileMenu({ handleLogout }) {
+/* 🍔 Unified Menu for Desktop & Mobile */
+function HamburgerMenu({ handleLogout }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="sm:hidden relative">
+    <div className="relative">
       {/* Hamburger Icon */}
       <button
         onClick={() => setOpen(!open)}
-        className="p-2 rounded-md border border-gray-300 hover:bg-gray-100 transition"
+        className="p-2 rounded-md border border-gray-300 mb-2 hover:bg-gray-100 transition"
       >
         {open ? (
-          <XIcon className="w-5 h-5 text-black" />
+          <XIcon className="w-6 h-6 text-black" />
         ) : (
-          <MenuIcon className="w-5 h-5 text-black" />
+          <MenuIcon className="w-6 h-6 text-black" />
         )}
       </button>
 
@@ -234,11 +210,18 @@ function MobileMenu({ handleLogout }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
-            className="absolute right-0 top-10 bg-white shadow-lg rounded-lg flex flex-col w-40 py-2 z-50 border border-gray-200"
+            className="absolute right-0 top-10 bg-white shadow-lg rounded-lg flex flex-col w-44 sm:w-56 py-2 z-50 border border-gray-200"
           >
             <Link
+              href="/create"
+              className="px-5 py-3 text-gray-800 text-base sm:text-lg hover:bg-gray-100 transition"
+              onClick={() => setOpen(false)}
+            >
+              + New Blog
+            </Link>
+            <Link
               href="/library"
-              className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              className="px-5 py-3 text-gray-800 text-base sm:text-lg hover:bg-gray-100 transition"
               onClick={() => setOpen(false)}
             >
               Library
@@ -248,7 +231,7 @@ function MobileMenu({ handleLogout }) {
                 handleLogout();
                 setOpen(false);
               }}
-              className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+              className="px-5 py-3 text-gray-800 text-base sm:text-lg hover:bg-gray-100 text-left transition"
             >
               Logout
             </button>
