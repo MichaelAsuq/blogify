@@ -6,6 +6,12 @@ import { db, auth } from "@/lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import Link from "next/link";
 import { BookmarkIcon as SolidBookmarkIcon } from "@heroicons/react/24/solid";
+import {
+  BookmarkIcon as OutlineBookmarkIcon,
+  Bars3Icon as MenuIcon,
+  XMarkIcon as XIcon,
+} from "@heroicons/react/24/outline";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Library() {
   const [posts, setPosts] = useState([]);
@@ -74,30 +80,7 @@ export default function Library() {
             My Library
           </h1>
 
-          {user && (
-            <div className="flex items-center gap-3">
-              <Link
-                href="/create"
-                className="px-4 py-1.5 bg-black text-white text-md rounded-md hover:bg-gray-900 transition"
-              >
-                + New Blog
-              </Link>
-
-              <Link
-                href="/"
-                className="px-4 py-1.5 border border-black text-black rounded-md hover:bg-black hover:text-white transition"
-              >
-                Blogs
-              </Link>
-
-              <button
-                onClick={handleLogout}
-                className="px-4 py-1.5 border border-black text-black rounded-md hover:bg-black hover:text-white transition"
-              >
-                Logout
-              </button>
-            </div>
-          )}
+          <HamburgerMenu handleLogout={handleLogout} />
         </div>
 
         {/* Intro */}
@@ -171,6 +154,62 @@ export default function Library() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+function HamburgerMenu({ handleLogout }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      {/* Hamburger Icon */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="p-2 rounded-md border border-gray-300 mb-2 hover:bg-gray-100 transition"
+      >
+        {open ? (
+          <XIcon className="w-6 h-6 text-black" />
+        ) : (
+          <MenuIcon className="w-6 h-6 text-black" />
+        )}
+      </button>
+
+      {/* Animated Dropdown */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+            className="absolute right-0 top-10 bg-white shadow-lg rounded-lg flex flex-col w-44 sm:w-56 py-2 z-50 border border-gray-200"
+          >
+            <Link
+              href="/create"
+              className="px-5 py-3 text-gray-800 text-base sm:text-lg hover:bg-gray-100 transition"
+              onClick={() => setOpen(false)}
+            >
+              + New Blog
+            </Link>
+            <Link
+              href="/home"
+              className="px-5 py-3 text-gray-800 text-base sm:text-lg hover:bg-gray-100 transition"
+              onClick={() => setOpen(false)}
+            >
+              Blogs
+            </Link>
+            <button
+              onClick={() => {
+                handleLogout();
+                setOpen(false);
+              }}
+              className="px-5 py-3 text-gray-800 text-base sm:text-lg hover:bg-gray-100 text-left transition"
+            >
+              Logout
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
