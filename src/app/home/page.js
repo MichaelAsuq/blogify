@@ -93,7 +93,7 @@ export default function Blogs() {
   
 
   return (
-    <div className="min-h-screen bg-[#fafafa] px-4 sm:px-6 md:px-10 lg:px-20 py-12 sm:py-16">
+    <div className="min-h-screen bg-[#fafafa] px-4 sm:px-6 md:px-10 lg:px-20 py-8 sm:py-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-12 relative">
